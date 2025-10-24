@@ -111,6 +111,8 @@ class Payment implements \JsonSerializable
 
     private $qrCodeString;
 
+    private $externalAuthentication;
+
     /**
      * Payment constructor.
      *
@@ -156,6 +158,11 @@ class Payment implements \JsonSerializable
         if (isset($data->DebitCard)) {
             $this->debitCard = new CreditCard();
             $this->debitCard->populate($data->DebitCard);
+        }
+
+        if (isset($data->ExternalAuthentication)) {
+            $this->externalAuthentication = new ExternalAuthentication();
+            $this->externalAuthentication->populate($data->ExternalAuthentication);
         }
 
         $this->expirationDate = isset($data->ExpirationDate) ? $data->ExpirationDate : null;
@@ -909,5 +916,20 @@ class Payment implements \JsonSerializable
     public function getQrCodeString()
     {
         return $this->qrCodeString;
+    }
+
+    public function getExternalAuthentication()
+    {
+        return $this->externalAuthentication;
+    }
+
+    /**
+     * @return $this
+     */
+    public function setExternalAuthentication(ExternalAuthentication $externalAuthentication)
+    {
+        $this->externalAuthentication = $externalAuthentication;
+
+        return $this;
     }
 }

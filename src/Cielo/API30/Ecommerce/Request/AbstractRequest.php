@@ -87,7 +87,9 @@ abstract class AbstractRequest
         if (curl_errno($curl)) {
             $message = sprintf('cURL error[%s]: %s', curl_errno($curl), curl_error($curl));
 
-            $this->logger->error($message);
+            if ($this->logger !== null) {
+                $this->logger->error($message);
+            }
 
             throw new \RuntimeException($message);
         }
@@ -123,10 +125,19 @@ abstract class AbstractRequest
                     $exception = new CieloRequestException($response, $statusCode, $exception);
                     $exception->setCieloError($cieloError);
                 }
+                if ($this->logger !== null) {
+                    $this->logger->error($exception);
+                }
                 throw $exception;
             case 404:
+                if ($this->logger !== null) {
+                    $this->logger->error('Cielo - Resource not found');
+                }
                 throw new CieloRequestException('Resource not found', 404, null);
             default:
+                if ($this->logger !== null) {
+                    $this->logger->error('Cielo - Unknown status: '.$statusCode);
+                }
                 throw new CieloRequestException('Unknown status', $statusCode);
         }
 
